@@ -33,12 +33,13 @@ namespace KPP
         private static int Time; // Общее модельное время
         private static int IsCheckingTime;
 
+
         // Интересные статистические данные
         private static int NoDocs; // Людей без документов
         private static int WithDrugs; // Людей со странным содержимым сумок
         private static int PunishedPeoples; // Наказанных людей
-        private static string WhatIsDoingSecurity;
-       
+        private static string? WhatIsDoingSecurity;
+ 
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -51,6 +52,8 @@ namespace KPP
             textBox7.Text = "200";
             textBox8.Text = "1";
             textBox9.Text = "1";
+            progressBar1.Minimum = 0;
+            
         }
 
         private void IsCheckingFunction()
@@ -79,14 +82,21 @@ namespace KPP
             IsCheckingTime += T; // Охранник приступает к проверке  очередного человека
             Random random = new Random();
             int rnd = random.Next(0, 100);
-            if (rnd < Delta1) // Значит человек без документов
+            if (rnd < Delta1 && rnd < Delta2) // Двойной нарушитель
+            {
+                NoDocs += 1;
+                WithDrugs += 1;
+                IsCheckingTime += dt;
+                PunishedPeoples += 1;
+            }
+            else if (rnd < Delta1) // Значит человек без документов
             {
                 NoDocs += 1; // Добавляем к счетчику человек без документов
                 IsCheckingTime += dt; // Увеличиваем время охранника
                 PunishedPeoples += 1;
                 WhatIsDoingSecurity = "Наказывает";
             }
-            if (rnd < Delta2) // Значит человек принес/вынес что-либо
+            else if (rnd < Delta2) // Значит человек принес/вынес что-либо
             {
                 WithDrugs += 1;
                 IsCheckingTime += dt;
@@ -111,11 +121,12 @@ namespace KPP
             deltaT = Convert.ToInt32(textBox9.Text);
 
             // 
-            int localTime1 = 0; // Время прихода человека
-            int localTime2 = 0; // Время выхода человека
+            int localTime1 = t1; // Локальное время прихода = Время прихода человека
+            int localTime2 = t2; // Локальное время выхода = Время выхода человека
             // 
             TimeSpeed = Convert.ToInt32(trackBar1.Value); // Скорость моделирования
             MinutesInDay = Days * 24 * 60; // Количество минут в днях
+            progressBar1.Maximum = MinutesInDay + 2; // Максимальное значение прогрессбара
             int StepsCounter = 0; // Счетчик шагов моделирования
             
             for (Time = 0; Time <= MinutesInDay; Time += deltaT) // Общее модельное время
@@ -165,29 +176,12 @@ namespace KPP
                 // Если человек много
                 if (QueueIn + QueueOut >= N)
                 {
-                    // Если человек слишком много, прямо перебор, то все люди на выход выходят без проверки
-                    if (QueueOut > N)
-                    {
-                        QueueOut = 0;
-                    }
-                    else // Если человек на выход нормально
-                    {
-                        // Тогда охранник выпускает нужное количество людей из очереди на выход, не проверяя их, с запасом на 1 человека
-                        int Kicked = Math.Abs(N - QueueIn - QueueOut) + 1;
-                        if (Kicked < QueueOut)
-                        {
-                            QueueOut -= Kicked;
-                            NoCheckingPeoples += Kicked;
-                        }
-                        else
-                        {
-                            NoCheckingPeoples += QueueOut;
-                            QueueOut = 0;
-                        }
-                    }
+                    // То всех на выход выпускаем без проблем
+                    NoCheckingPeoples += QueueOut;
+                    QueueOut = 0;
                     
                 }
-
+                await Task.Delay((1000 * deltaT / 10) * TimeSpeed); // Программная задержка
                 Protocol[0] = Time.ToString(); // Общее модельное время
                 Protocol[1] = QueueIn.ToString(); // Количество людей в очереди на ВХОД (В текущий момент времени)
                 Protocol[2] = QueueOut.ToString(); // Количество людей в очереди на ВЫХОД (аналогично)
@@ -197,6 +191,7 @@ namespace KPP
                 Protocol[6] = PunishedPeoples.ToString(); // Наказано нарушителей
                 Protocol[7] = NoCheckingPeoples.ToString(); // Выгнали из-за переполнения буфера
                 Protocol[8] = WhatIsDoingSecurity; // Чем в данный момент времени занят охранник
+                progressBar1.Value += deltaT;
                 dataGridView1.Rows.Add(Protocol);
             }
             

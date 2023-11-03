@@ -53,7 +53,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -63,10 +62,16 @@
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -303,17 +308,6 @@
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.dataGridView1);
-            this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.groupBox2.Location = new System.Drawing.Point(1088, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(769, 791);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Протокол моделирования";
-            // 
             // Column1
             // 
             this.Column1.HeaderText = "Время";
@@ -377,12 +371,56 @@
             this.Column9.Name = "Column9";
             this.Column9.Width = 125;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.dataGridView1);
+            this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.groupBox2.Location = new System.Drawing.Point(1088, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(769, 791);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Протокол моделирования";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(401, 910);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(684, 54);
+            this.progressBar1.TabIndex = 3;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Image = global::KPP.Properties.Resources.road;
+            this.pictureBox1.Location = new System.Drawing.Point(401, 29);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(684, 847);
+            this.pictureBox1.TabIndex = 4;
+            this.pictureBox1.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox2.Image = global::KPP.Properties.Resources.policeman;
+            this.pictureBox2.Location = new System.Drawing.Point(771, 408);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(69, 81);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox2.TabIndex = 5;
+            this.pictureBox2.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Bisque;
             this.ClientSize = new System.Drawing.Size(1869, 976);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.groupBox1);
@@ -394,6 +432,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -434,5 +474,8 @@
         private DataGridViewTextBoxColumn Column7;
         private DataGridViewTextBoxColumn Column8;
         private DataGridViewTextBoxColumn Column9;
+        private ProgressBar progressBar1;
+        private PictureBox pictureBox1;
+        private PictureBox pictureBox2;
     }
 }
