@@ -22,6 +22,7 @@ namespace KPP
         // Флаги моделирования
         private static bool IsRunning = false; // Проверка на работу моделирования
         private static bool IsChecking = false; // Правда - охранник занят и не может проверять, ложь - охранник свободен
+        private static bool IsPunishing = false; // Флаг, говорящий о том, что нужно провести доп. проверку
 
         // По работе программы
         private static int TimeSpeed; // Для тракбара
@@ -35,6 +36,7 @@ namespace KPP
         private static int NoCheckingPeoples = 0; // Выгнато из-за переполнения буфера
         private static int Time; // Общее модельное время
         private static int IsCheckingTime;
+        private static int IsPunishingTime;
 
 
         // Интересные статистические данные
@@ -64,52 +66,65 @@ namespace KPP
             
         }
 
+        private void IsPunishingFunction()
+        {
+            // Проверяем, сколько времени охранник будет занят доп проверкой
+            if (IsPunishingTime >= 0)
+            {
+                IsPunishing = true;
+            }
+            else
+            {
+                IsPunishing = false;
+                IsPunishingTime = 0;
+            }
+        }
+
         private void IsCheckingFunction()
         {
             // Проверяем, занят ли охранник
-            if (IsCheckingTime >= 0) // Если охранник находится в состоянии проверки
+            if (IsCheckingTime > 0) // Если охранник находится в состоянии проверки
             {
                 IsChecking = true;
-                WhatIsDoingSecurity = "Проверяет";
             }
             else
             {
                 IsChecking = false;
                 IsCheckingTime = 0; // Обнуляем его время
-                WhatIsDoingSecurity = "Бездельничает";
-            }
-            if (IsCheckingTime >= T)
-            {
-                WhatIsDoingSecurity = "Наказывает";
             }
         }
+
 
         private void SecurityWorking()
         {
             WhatIsDoingSecurity = "Проверяет";
             IsCheckingTime += T; // Охранник приступает к проверке  очередного человека
+            IsChecking = true;
             Random random = new Random();
             int rnd = random.Next(0, 100);
             if (rnd < Delta1 && rnd < Delta2) // Двойной нарушитель
             {
                 NoDocs += 1;
                 WithDrugs += 1;
-                IsCheckingTime += dt;
+                IsPunishingTime += dt;
                 PunishedPeoples += 1;
+                IsPunishing = true;
             }
             else if (rnd < Delta1) // Значит человек без документов
             {
                 NoDocs += 1; // Добавляем к счетчику человек без документов
-                IsCheckingTime += dt; // Увеличиваем время охранника
+                IsPunishingTime += dt; // Увеличиваем время охранника
                 PunishedPeoples += 1;
-                WhatIsDoingSecurity = "Наказывает";
+                //WhatIsDoingSecurity = "Наказывает";
+                IsPunishing = true;
             }
             else if (rnd < Delta2) // Значит человек принес/вынес что-либо
             {
                 WithDrugs += 1;
-                IsCheckingTime += dt;
+                IsPunishingTime += dt;
                 PunishedPeoples += 1;
-                WhatIsDoingSecurity = "Наказывает";
+                //WhatIsDoingSecurity = "Наказывает";
+                IsPunishing = true;
             }
             FacesCount += 1;
         }
@@ -127,10 +142,13 @@ namespace KPP
             WithDrugs = 0; // Людей со странным содержимым сумок
             PunishedPeoples = 0; // Наказанных людей
             WhatIsDoingSecurity = "";
+            IsPunishing = false;
+            IsChecking = false;
         }
 
         async private void main()
         {
+            #region stohasparams
             // Исходные данные стохастической модели
             t1 = Convert.ToInt32(textBox1.Text); // Новый гость
             t2 = Convert.ToInt32(textBox2.Text); // Кто-то уходит
@@ -141,7 +159,7 @@ namespace KPP
             N = Convert.ToInt32(textBox7.Text); // Размер стека охранника 
             Days = Convert.ToInt32(textBox8.Text);
             deltaT = Convert.ToInt32(textBox9.Text);
-
+            #endregion
             // Инициализация и обнуление нужных переменных
             int localTime1 = t1; // Локальное время прихода = Время прихода человека
             int localTime2 = t2; // Локальное время выхода = Время выхода человека
@@ -174,15 +192,27 @@ namespace KPP
                     localTime2 = Time + t2;
                 }
 
-                IsCheckingFunction(); // Проверяем, как дела у охранника
+                //IsCheckingFunction(); // Проверяем, как дела у охранника
                 // Если охранник кого-то проверяет, то время всё равно идет, люди приходят и так далее
+                if (!IsChecking && !IsPunishing)
+                {
+                    WhatIsDoingSecurity = "Бездельничает";
+                }
                 if (IsChecking)
                 {
-                    IsCheckingTime -= deltaT; // Отнимается время одной итерации цикла 
+                    IsCheckingTime -= deltaT; // Отнимается время одной итерации цикла
+                    WhatIsDoingSecurity = "Проверяет";
+                    IsCheckingFunction();
                 }
-                IsCheckingFunction();
+                if (IsPunishing && !IsChecking)
+                {
+                    IsPunishingTime -= deltaT;
+                    WhatIsDoingSecurity = "Наказывает";
+                    IsPunishingFunction();
+                }
+                
 
-                if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false) // В какой-то из очередей есть люди и охранник готов их проверять
+                if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
                 {
                     // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
                     if (QueueIn > QueueOut)
@@ -324,5 +354,7 @@ namespace KPP
         {
 
         }
+
+       
     }
 }
