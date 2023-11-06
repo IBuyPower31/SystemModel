@@ -66,12 +66,17 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -122,6 +127,7 @@
             this.label9.Size = new System.Drawing.Size(57, 28);
             this.label9.TabIndex = 17;
             this.label9.Text = "del_T\r\n";
+            this.label9.DoubleClick += new System.EventHandler(this.label9_DoubleClick);
             // 
             // textBox8
             // 
@@ -412,20 +418,55 @@
             this.pictureBox2.TabIndex = 5;
             this.pictureBox2.TabStop = false;
             // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Image = global::KPP.Properties.Resources.puss_in_boots;
+            this.pictureBox3.Location = new System.Drawing.Point(1119, 794);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(194, 170);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox3.TabIndex = 6;
+            this.pictureBox3.TabStop = false;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label10.Location = new System.Drawing.Point(552, 869);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(408, 38);
+            this.label10.TabIndex = 7;
+            this.label10.Text = "Поставьте защиту, пожалуйста";
+            this.label10.Click += new System.EventHandler(this.label10_Click);
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = global::KPP.Properties.Resources.pussy_in_boots;
+            this.pictureBox4.Location = new System.Drawing.Point(1319, 794);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(191, 170);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox4.TabIndex = 8;
+            this.pictureBox4.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Bisque;
             this.ClientSize = new System.Drawing.Size(1869, 976);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
             this.Text = "Моделирование КПП";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -434,7 +475,10 @@
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -477,5 +521,8 @@
         private ProgressBar progressBar1;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
+        private PictureBox pictureBox3;
+        private Label label10;
+        private PictureBox pictureBox4;
     }
 }

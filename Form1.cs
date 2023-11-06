@@ -1,3 +1,6 @@
+using System.Collections;
+using Aspose.Cells; // Для выгрузки в Excel
+
 namespace KPP
 {
     public partial class Form1 : Form
@@ -39,7 +42,9 @@ namespace KPP
         private static int WithDrugs; // Людей со странным содержимым сумок
         private static int PunishedPeoples; // Наказанных людей
         private static string? WhatIsDoingSecurity;
- 
+
+        
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -53,6 +58,9 @@ namespace KPP
             textBox8.Text = "1";
             textBox9.Text = "1";
             progressBar1.Minimum = 0;
+            pictureBox3.Hide();
+            pictureBox4.Hide();
+            label10.Hide();
             
         }
 
@@ -107,6 +115,20 @@ namespace KPP
         }
 
 
+        private void ResetParams()
+        {
+            QueueIn = 0; // Людей в очереди на вход
+            QueueOut = 0; // Людей в очереди на выход
+            FacesCount = 0; // Общее количество обработанных людей
+            NoCheckingPeoples = 0; // Выгнато из-за переполнения буфера
+            Time = 0; // Общее модельное время
+            IsCheckingTime = 0;
+            NoDocs = 0; // Людей без документов
+            WithDrugs = 0; // Людей со странным содержимым сумок
+            PunishedPeoples = 0; // Наказанных людей
+            WhatIsDoingSecurity = "";
+        }
+
         async private void main()
         {
             // Исходные данные стохастической модели
@@ -120,15 +142,18 @@ namespace KPP
             Days = Convert.ToInt32(textBox8.Text);
             deltaT = Convert.ToInt32(textBox9.Text);
 
-            // 
+            // Инициализация и обнуление нужных переменных
             int localTime1 = t1; // Локальное время прихода = Время прихода человека
             int localTime2 = t2; // Локальное время выхода = Время выхода человека
+            ResetParams();
             // 
             TimeSpeed = Convert.ToInt32(trackBar1.Value); // Скорость моделирования
             MinutesInDay = Days * 24 * 60; // Количество минут в днях
             progressBar1.Maximum = MinutesInDay + 2; // Максимальное значение прогрессбара
             int StepsCounter = 0; // Счетчик шагов моделирования
-            
+
+            // Обнуление переменных
+            progressBar1.Value = progressBar1.Minimum;
             for (Time = 0; Time <= MinutesInDay; Time += deltaT) // Общее модельное время
             {
                 Protocol = new string[9] { "", "", "", "", "", "", "", "", "" };
@@ -191,10 +216,12 @@ namespace KPP
                 Protocol[6] = PunishedPeoples.ToString(); // Наказано нарушителей
                 Protocol[7] = NoCheckingPeoples.ToString(); // Выгнали из-за переполнения буфера
                 Protocol[8] = WhatIsDoingSecurity; // Чем в данный момент времени занят охранник
+                Security security1 = new Security(Protocol); // Для протоколирования в Эксель
+                SecurityList.Add(security1);
                 progressBar1.Value += deltaT;
                 dataGridView1.Rows.Add(Protocol);
             }
-            
+            ExcelDumping();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -203,12 +230,14 @@ namespace KPP
             {
                 IsRunning = true;
                 button1.Text = "Стоп";
+                dataGridView1.Rows.Clear();
                 main();
             }
             else
             {
                 IsRunning = false;
                 button1.Text = "Поехали!";
+                
             }
         }
 
@@ -234,6 +263,66 @@ namespace KPP
                     }
                 }
             }
+        }
+
+        // Для протоколирования
+        public class Security
+        {
+            public int Time { get; set; }
+            public int Input { get; set; }
+            public int Output { get; set; }
+            public int Processing { get; set; }
+            public int NoDocs { get; set; }
+            public int WithDrugs { get; set; }
+            public int PunishedPeoples { get; set; }
+            public int NoCheckingPeoples { get; set; }
+            public string WhatIsDoingSecurity { get; set; }
+
+
+            public Security(string[] buffer)
+            {
+                Time = Convert.ToInt32(buffer[0]);
+                Input = Convert.ToInt32(buffer[1]);
+                Output = Convert.ToInt32(buffer[2]);
+                Processing = Convert.ToInt32(buffer[3]);
+                NoDocs = Convert.ToInt32(buffer[4]);
+                WithDrugs = Convert.ToInt32(buffer[5]);
+                PunishedPeoples = Convert.ToInt32(buffer[6]);
+                NoCheckingPeoples = Convert.ToInt32(buffer[7]);
+                WhatIsDoingSecurity = buffer[8];
+            }
+        }
+
+        public List<Security> SecurityList = new List<Security>();
+
+        private void ExcelDumping()
+        {
+            Workbook workbook = new Workbook();
+            Worksheet sheet = workbook.Worksheets.Add("Data");
+            sheet.Cells.ImportCustomObjects((ICollection)SecurityList,
+                new string[] { "Time", "Input", "Output", "Processing", "NoDocs", "WithDrugs", "PunishedPeoples", "NoCheckingPeoples", "WhatIsDoingSecurity" },
+                true,
+                0,
+                0,
+                SecurityList.Count,
+                true,
+                null,
+                false
+                );
+            sheet.AutoFitColumns();
+            workbook.Save("Protocol.xlsx");
+        }
+
+        private void label9_DoubleClick(object sender, EventArgs e)
+        {
+            pictureBox3.Show();
+            pictureBox4.Show();
+            label10.Show();
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

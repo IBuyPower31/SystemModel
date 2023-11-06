@@ -83,6 +83,26 @@ namespace KPP.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap puss_in_boots {
+            get {
+                object obj = ResourceManager.GetObject("puss_in_boots", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pussy_in_boots {
+            get {
+                object obj = ResourceManager.GetObject("pussy_in_boots", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap road {
             get {
                 object obj = ResourceManager.GetObject("road", resourceCulture);
