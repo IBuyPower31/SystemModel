@@ -1,5 +1,6 @@
 using System.Collections;
 using Aspose.Cells; // Для выгрузки в Excel
+using System.Threading;
 
 namespace KPP
 {
@@ -10,6 +11,7 @@ namespace KPP
             InitializeComponent();
         }
 
+        #region startparams
         // Создадим необходимые переменные для моделирования
         private static int t1; // Человек пришел на предприятие
         private static int t2; // Человек ушел с предприятия
@@ -44,9 +46,9 @@ namespace KPP
         private static int WithDrugs; // Людей со странным содержимым сумок
         private static int PunishedPeoples; // Наказанных людей
         private static string? WhatIsDoingSecurity;
+        #endregion
 
-        
-        
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -60,8 +62,10 @@ namespace KPP
             textBox8.Text = "1";
             textBox9.Text = "1";
             progressBar1.Minimum = 0;
+            pictureBox1.Hide();
             pictureBox3.Hide();
             pictureBox4.Hide();
+            pictureBox5.Hide();
             label10.Hide();
             
         }
@@ -115,7 +119,6 @@ namespace KPP
                 NoDocs += 1; // Добавляем к счетчику человек без документов
                 IsPunishingTime += dt; // Увеличиваем время охранника
                 PunishedPeoples += 1;
-                //WhatIsDoingSecurity = "Наказывает";
                 IsPunishing = true;
             }
             else if (rnd < Delta2) // Значит человек принес/вынес что-либо
@@ -123,7 +126,6 @@ namespace KPP
                 WithDrugs += 1;
                 IsPunishingTime += dt;
                 PunishedPeoples += 1;
-                //WhatIsDoingSecurity = "Наказывает";
                 IsPunishing = true;
             }
             FacesCount += 1;
@@ -144,6 +146,39 @@ namespace KPP
             WhatIsDoingSecurity = "";
             IsPunishing = false;
             IsChecking = false;
+        }
+
+        private void AnimateInput()
+        {
+            pictureBox5.Show();
+            pictureBox5.Top += 35;
+            if (pictureBox5.Top > 625)
+            {
+                pictureBox5.Top = 45;
+            }
+            
+        }
+
+        private void AnimateOutput()
+        {
+            pictureBox6.Show();
+            pictureBox6.Top -= 35;
+            if (pictureBox6.Top < 45)
+            {
+                pictureBox6.Top = 625;
+            }
+        }
+
+        private void AnimateCheck()
+        {
+            pictureBox1.Show();
+            pictureBox1.Image = Properties.Resources.check;
+        }
+
+        private void AnimatePunish()
+        {
+
+            pictureBox1.Image = Properties.Resources.fight;
         }
 
         async private void main()
@@ -172,8 +207,9 @@ namespace KPP
 
             // Обнуление переменных
             progressBar1.Value = progressBar1.Minimum;
-            for (Time = 0; Time <= MinutesInDay; Time += deltaT) // Общее модельное время
+            for (Time = 0; Time <= MinutesInDay && IsRunning; Time += deltaT) // Общее модельное время
             {
+                  
                 Protocol = new string[9] { "", "", "", "", "", "", "", "", "" };
                 StepsCounter += 1; // Количество шагов цикла
                 if (Time - localTime1 >= 0)
@@ -181,6 +217,7 @@ namespace KPP
                     // Значит человек пришел на КПП, запуск активности 1
                     QueueIn += 1;
                     // Сюда еще впилить прогрессбар
+                    AnimateInput();
                     localTime1 = Time + t1;
                 }
 
@@ -189,6 +226,7 @@ namespace KPP
                     // Значит человек уходит с КПП, запуск активности 2
                     QueueOut += 1;
                     // Сюда еще впилить прогрессбар
+                    AnimateOutput();
                     localTime2 = Time + t2;
                 }
 
@@ -202,12 +240,16 @@ namespace KPP
                 {
                     IsCheckingTime -= deltaT; // Отнимается время одной итерации цикла
                     WhatIsDoingSecurity = "Проверяет";
+                    
+                    AnimateCheck();
                     IsCheckingFunction();
                 }
                 if (IsPunishing && !IsChecking)
                 {
                     IsPunishingTime -= deltaT;
                     WhatIsDoingSecurity = "Наказывает";
+
+                    AnimatePunish();
                     IsPunishingFunction();
                 }
                 
@@ -295,6 +337,8 @@ namespace KPP
             }
         }
 
+
+        #region protocoling
         // Для протоколирования
         public class Security
         {
@@ -342,6 +386,8 @@ namespace KPP
             sheet.AutoFitColumns();
             workbook.Save("Protocol.xlsx");
         }
+
+        #endregion
 
         private void label9_DoubleClick(object sender, EventArgs e)
         {
