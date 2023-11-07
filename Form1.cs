@@ -235,6 +235,8 @@ namespace KPP
                 if (!IsChecking && !IsPunishing)
                 {
                     WhatIsDoingSecurity = "Бездельничает";
+                    pictureBox1.Show();
+                    pictureBox1.Image = Properties.Resources.sleep;
                 }
                 if (IsChecking)
                 {
@@ -278,7 +280,7 @@ namespace KPP
                     QueueOut = 0;
                     
                 }
-                await Task.Delay((1000 * deltaT / 10) * TimeSpeed); // Программная задержка
+                await Task.Delay((1000 * deltaT / 25) * TimeSpeed); // Программная задержка
                 Protocol[0] = Time.ToString(); // Общее модельное время
                 Protocol[1] = QueueIn.ToString(); // Количество людей в очереди на ВХОД (В текущий момент времени)
                 Protocol[2] = QueueOut.ToString(); // Количество людей в очереди на ВЫХОД (аналогично)
