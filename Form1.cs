@@ -13,12 +13,12 @@ namespace KPP
 
         #region startparams
         // Создадим необходимые переменные для моделирования
-        private static int t1; // Человек пришел на предприятие
-        private static int t2; // Человек ушел с предприятия
-        private static int T; // Человека проверяют
-        private static int Delta1; // Человек без документов, только уши, лапы и хвост
-        private static int Delta2; // Человек принес что-то запрещенное (УК РФ 228-232)
-        private static int dt; // Охранник уводит человека в комнату и делает с ним ВСЯКОЕ
+        private static double t1; // Человек пришел на предприятие
+        private static double t2; // Человек ушел с предприятия
+        private static double T; // Человека проверяют
+        private static double Delta1; // Человек без документов, только уши, лапы и хвост
+        private static double Delta2; // Человек принес что-то запрещенное (УК РФ 228-232)
+        private static double dt; // Охранник уводит человека в комнату и делает с ним ВСЯКОЕ
         private static int N; // Размер стека охранника
 
         // Флаги моделирования
@@ -27,18 +27,18 @@ namespace KPP
         private static bool IsPunishing = false; // Флаг, говорящий о том, что нужно провести доп. проверку
 
         // По работе программы
-        private static int TimeSpeed; // Для тракбара
+        private static double TimeSpeed; // Для тракбара
         private static int MinutesInDay; // Количество минут в дне
         private static int Days; // Количество дней моделирования
-        private static int deltaT; // Шаг времени
+        private static double deltaT; // Шаг времени
         private static string[] Protocol; // Для протоколирования
         private static int QueueIn; // Людей в очереди на вход
         private static int QueueOut; // Людей в очереди на выход
         private static int FacesCount; // Общее количество обработанных людей
         private static int NoCheckingPeoples = 0; // Выгнато из-за переполнения буфера
-        private static int Time; // Общее модельное время
-        private static int IsCheckingTime;
-        private static int IsPunishingTime;
+        private static double Time; // Общее модельное время
+        private static double IsCheckingTime;
+        private static double IsPunishingTime;
 
 
         // Интересные статистические данные
@@ -185,19 +185,19 @@ namespace KPP
         {
             #region stohasparams
             // Исходные данные стохастической модели
-            t1 = Convert.ToInt32(textBox1.Text); // Новый гость
-            t2 = Convert.ToInt32(textBox2.Text); // Кто-то уходит
-            T = Convert.ToInt32(textBox3.Text); // Проверка человека
-            Delta1 = Convert.ToInt32(textBox4.Text); // Человек без документов
-            Delta2 = Convert.ToInt32(textBox5.Text); // Что-то принес или ворует
-            dt = Convert.ToInt32(textBox6.Text); // Наказание человека по времени
+            t1 = Convert.ToDouble(textBox1.Text); // Новый гость
+            t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
+            T = Convert.ToDouble(textBox3.Text); // Проверка человека
+            Delta1 = Convert.ToDouble(textBox4.Text); // Человек без документов
+            Delta2 = Convert.ToDouble(textBox5.Text); // Что-то принес или ворует
+            dt = Convert.ToDouble(textBox6.Text); // Наказание человека по времени
             N = Convert.ToInt32(textBox7.Text); // Размер стека охранника 
             Days = Convert.ToInt32(textBox8.Text);
-            deltaT = Convert.ToInt32(textBox9.Text);
+            deltaT = Convert.ToDouble(textBox9.Text);
             #endregion
             // Инициализация и обнуление нужных переменных
-            int localTime1 = t1; // Локальное время прихода = Время прихода человека
-            int localTime2 = t2; // Локальное время выхода = Время выхода человека
+            double localTime1 = t1; // Локальное время прихода = Время прихода человека
+            double localTime2 = t2; // Локальное время выхода = Время выхода человека
             ResetParams();
             // 
             TimeSpeed = Convert.ToInt32(trackBar1.Value); // Скорость моделирования
@@ -280,7 +280,7 @@ namespace KPP
                     QueueOut = 0;
                     
                 }
-                await Task.Delay((1000 * deltaT / 25) * TimeSpeed); // Программная задержка
+                await Task.Delay((1000 * Convert.ToInt32(deltaT) / 25) * Convert.ToInt32(TimeSpeed)); // Программная задержка
                 Protocol[0] = Time.ToString(); // Общее модельное время
                 Protocol[1] = QueueIn.ToString(); // Количество людей в очереди на ВХОД (В текущий момент времени)
                 Protocol[2] = QueueOut.ToString(); // Количество людей в очереди на ВЫХОД (аналогично)
@@ -292,7 +292,7 @@ namespace KPP
                 Protocol[8] = WhatIsDoingSecurity; // Чем в данный момент времени занят охранник
                 Security security1 = new Security(Protocol); // Для протоколирования в Эксель
                 SecurityList.Add(security1);
-                progressBar1.Value += deltaT;
+                progressBar1.Value += Convert.ToInt32(deltaT);
                 dataGridView1.Rows.Add(Protocol);
             }
             ExcelDumping();
@@ -344,7 +344,7 @@ namespace KPP
         // Для протоколирования
         public class Security
         {
-            public int Time { get; set; }
+            public double Time { get; set; }
             public int Input { get; set; }
             public int Output { get; set; }
             public int Processing { get; set; }
@@ -357,7 +357,7 @@ namespace KPP
 
             public Security(string[] buffer)
             {
-                Time = Convert.ToInt32(buffer[0]);
+                Time = Convert.ToDouble(buffer[0]);
                 Input = Convert.ToInt32(buffer[1]);
                 Output = Convert.ToInt32(buffer[2]);
                 Processing = Convert.ToInt32(buffer[3]);
@@ -370,6 +370,25 @@ namespace KPP
         }
 
         public List<Security> SecurityList = new List<Security>();
+
+        // Код для второй лабораторной работы
+        public class Generator
+        {
+            private readonly Random ExponentialRandom = new Random();
+
+            private readonly Random NormalRandom = new Random();
+
+            public double ExponentialFunction(double lambda)
+            {
+                return -(1 / lambda) * Math.Log(ExponentialRandom.NextDouble());
+            }
+
+            public double NormalFunction(double sigma, double m)
+            {
+                return (sigma * Math.Cos(2 * Math.PI * NormalRandom.NextDouble()) 
+                    * Math.Sqrt(-2 * Math.Log(NormalRandom.NextDouble()))) + m;
+            }
+        }
 
         private void ExcelDumping()
         {
@@ -402,7 +421,68 @@ namespace KPP
         {
 
         }
+
         // Вторая ЛР будет выполняться во второй ветке - LW_2
-       
+        private void button2_Click(object sender, EventArgs e)
+        {
+            const int N = 2000;
+            progressBar2.Minimum = 0;
+            progressBar2.Maximum = N;
+            Generator generator = new Generator();
+
+            ArrayList NormalArray1 = new ArrayList();
+            ArrayList NormalArray2 = new ArrayList();
+            ArrayList NormalArray3 = new ArrayList();
+            ArrayList ExponentialArray1 = new ArrayList();
+            ArrayList ExponentialArray2 = new ArrayList();
+
+            double delta1, delta2, t1, t2, T;
+
+            for (int i = 0; i < N; i++)
+            {
+                delta1 = generator.ExponentialFunction(0.1);
+                ExponentialArray1.Add(delta1);
+                delta2 = generator.ExponentialFunction(0.2);
+                ExponentialArray2.Add(delta2);
+
+                t1 = generator.NormalFunction(0.5, 2);
+                NormalArray1.Add(t1);
+                t2 = generator.NormalFunction(0.5, 3);
+                NormalArray2.Add(t2);
+                // Параметр T должен иметь разброс от 2 до 8
+                T = generator.NormalFunction(0.75, 5);
+                NormalArray3.Add(T);
+                progressBar2.Value += 1;
+            }
+
+            Workbook workbook = new Workbook();
+            Worksheet sheet = workbook.Worksheets.Add("NormalFunction");
+            sheet.Cells.ImportArrayList(NormalArray1, 1, 0, true);
+            sheet.Cells.ImportArrayList(NormalArray2, 1, 1, true);
+            sheet.Cells.ImportArrayList(NormalArray3, 1, 2, true);
+            sheet.AutoFitColumns();
+
+            Worksheet sheet1 = workbook.Worksheets.Add("ExponentialFunction");
+            sheet1.Cells.ImportArrayList(ExponentialArray1, 1, 0, true);
+            sheet1.Cells.ImportArrayList(ExponentialArray2, 1, 1, true);
+            sheet1.AutoFitColumns();
+            workbook.Save("ExponentialAndNormalFunction.xlsx");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Generator generator = new Generator();
+            Delta1 = generator.ExponentialFunction(0.1);
+            Delta2 = generator.ExponentialFunction(0.2);
+            textBox4.Text = Convert.ToString(Delta1);
+            textBox5.Text = Convert.ToString(Delta2);
+            t1 = generator.NormalFunction(0.5, 2);
+            t2 = generator.NormalFunction(0.5, 3);
+            // Параметр T должен иметь разброс от 2 до 8
+            T = generator.NormalFunction(0.75, 5);
+            textBox1.Text = Convert.ToString(t1);
+            textBox2.Text = Convert.ToString(t2);
+            textBox3.Text = Convert.ToString(T);
+        }
     }
 }
