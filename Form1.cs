@@ -46,6 +46,12 @@ namespace KPP
         private static int WithDrugs; // Людей со странным содержимым сумок
         private static int PunishedPeoples; // Наказанных людей
         private static string? WhatIsDoingSecurity;
+
+        // Средние данные для вывода
+        private static double AvgPunishingTime;
+        private static double AvgIn;
+        private static double AvgOut;
+        private static double AvgT;
         #endregion
 
 
@@ -106,6 +112,12 @@ namespace KPP
             IsChecking = true;
             Random random = new Random();
             int rnd = random.Next(0, 100);
+            // Новый генератор
+            Generator generator = new Generator();
+            Delta1 = generator.ExponentialFunction(0.1);
+            textBox4.Text = Convert.ToString(Math.Round(Delta1, 4));
+            Delta2 = generator.ExponentialFunction(0.2);
+            textBox5.Text = Convert.ToString(Math.Round(Delta2, 4));
             if (rnd < Delta1 && rnd < Delta2) // Двойной нарушитель
             {
                 NoDocs += 1;
@@ -184,6 +196,7 @@ namespace KPP
         async private void main()
         {
             #region stohasparams
+            Generator generator = new Generator();
             // Исходные данные стохастической модели
             t1 = Convert.ToDouble(textBox1.Text); // Новый гость
             t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
@@ -204,12 +217,17 @@ namespace KPP
             MinutesInDay = Days * 24 * 60; // Количество минут в днях
             progressBar1.Maximum = MinutesInDay + 2; // Максимальное значение прогрессбара
             int StepsCounter = 0; // Счетчик шагов моделирования
+            // Средние параметры
+            double AvgChecking = 0;
+
+            // Временные 
+            double TempTime1 = 0;
+            double TempTime2 = 0;
 
             // Обнуление переменных
             progressBar1.Value = progressBar1.Minimum;
             for (Time = 0; Time <= MinutesInDay && IsRunning; Time += deltaT) // Общее модельное время
             {
-                  
                 Protocol = new string[9] { "", "", "", "", "", "", "", "", "" };
                 StepsCounter += 1; // Количество шагов цикла
                 if (Time - localTime1 >= 0)
@@ -218,7 +236,10 @@ namespace KPP
                     QueueIn += 1;
                     // Сюда еще впилить прогрессбар
                     AnimateInput();
-                    localTime1 = Time + t1;
+                    AvgIn += 1;
+                    TempTime1 = generator.NormalFunction(0.5, 2);
+                    localTime1 = Time + TempTime1;
+                    textBox1.Text = Convert.ToString(Math.Round(TempTime1, 4));
                 }
 
                 if (Time - localTime2 >= 0)
@@ -227,8 +248,14 @@ namespace KPP
                     QueueOut += 1;
                     // Сюда еще впилить прогрессбар
                     AnimateOutput();
-                    localTime2 = Time + t2;
+                    AvgOut += 1;
+                    TempTime2 = generator.NormalFunction(0.5, 3);
+                    localTime2 = Time + TempTime2;
+                    textBox2.Text = Convert.ToString(Math.Round(TempTime2, 4));
                 }
+
+                AvgIn += QueueIn;
+                AvgOut += QueueOut;
 
                 //IsCheckingFunction(); // Проверяем, как дела у охранника
                 // Если охранник кого-то проверяет, то время всё равно идет, люди приходят и так далее
@@ -258,6 +285,10 @@ namespace KPP
 
                 if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
                 {
+                    //UPDATED после защиты: T для третьей лабораторной работы
+                    //T = generator.NormalFunction(0.75, 5);
+                    AvgT += T;
+                    //textBox3.Text = Convert.ToString(Math.Round(T, 4));
                     // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
                     if (QueueIn > QueueOut)
                     {
@@ -295,6 +326,12 @@ namespace KPP
                 progressBar1.Value += Convert.ToInt32(deltaT);
                 dataGridView1.Rows.Add(Protocol);
             }
+            MessageBox.Show($"Средняя длина очереди на вход: {Math.Round(AvgIn / MinutesInDay, 0)} \n" +
+                            $"Средняя длина очереди на выход: {Math.Round(AvgOut / MinutesInDay, 0)} \n" +
+                            $"Среднее время, затраченное на проверки людей: {Math.Round(AvgT / FacesCount, 4)} \n" +
+                            $"Общее время, затраченное на проверки людей: {Math.Round(AvgT, 4)} \n" +
+                            $"Количество людей, не прошедших проверку: {PunishedPeoples}");
+
             ExcelDumping();
         }
 
@@ -478,7 +515,7 @@ namespace KPP
             textBox5.Text = Convert.ToString(Delta2);
             t1 = generator.NormalFunction(0.5, 2);
             t2 = generator.NormalFunction(0.5, 3);
-            // Параметр T должен иметь разброс от 2 до 8
+            // Параметр T должен иметь разброс от 2 до 8 UPDATED после защиты: T для третьей лабораторной работы
             T = generator.NormalFunction(0.75, 5);
             textBox1.Text = Convert.ToString(t1);
             textBox2.Text = Convert.ToString(t2);
