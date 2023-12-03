@@ -326,11 +326,11 @@ namespace KPP
                 progressBar1.Value += Convert.ToInt32(deltaT);
                 dataGridView1.Rows.Add(Protocol);
             }
-            MessageBox.Show($"Средняя длина очереди на вход: {Math.Round(AvgIn / MinutesInDay, 0)} \n" +
+            richTextBox2.Text = $"Средняя длина очереди на вход: {Math.Round(AvgIn / MinutesInDay, 0)} \n" +
                             $"Средняя длина очереди на выход: {Math.Round(AvgOut / MinutesInDay, 0)} \n" +
                             $"Среднее время, затраченное на проверки людей: {Math.Round(AvgT / FacesCount, 4)} \n" +
                             $"Общее время, затраченное на проверки людей: {Math.Round(AvgT, 4)} \n" +
-                            $"Количество людей, не прошедших проверку: {PunishedPeoples}");
+                            $"Количество людей, не прошедших проверку: {PunishedPeoples}";
 
             ExcelDumping();
         }
@@ -520,6 +520,11 @@ namespace KPP
             textBox1.Text = Convert.ToString(t1);
             textBox2.Text = Convert.ToString(t2);
             textBox3.Text = Convert.ToString(T);
+        }
+
+        private void richTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

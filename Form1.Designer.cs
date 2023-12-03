@@ -75,6 +75,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.button3 = new System.Windows.Forms.Button();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -309,7 +310,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 29;
-            this.dataGridView1.Size = new System.Drawing.Size(752, 759);
+            this.dataGridView1.Size = new System.Drawing.Size(752, 686);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
             // 
@@ -382,7 +383,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.groupBox2.Location = new System.Drawing.Point(1088, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(769, 791);
+            this.groupBox2.Size = new System.Drawing.Size(769, 724);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Протокол моделирования";
@@ -397,7 +398,7 @@
             // pictureBox3
             // 
             this.pictureBox3.Image = global::KPP.Properties.Resources.puss_in_boots;
-            this.pictureBox3.Location = new System.Drawing.Point(1119, 794);
+            this.pictureBox3.Location = new System.Drawing.Point(0, 684);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(194, 170);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -418,7 +419,7 @@
             // pictureBox4
             // 
             this.pictureBox4.Image = global::KPP.Properties.Resources.pussy_in_boots;
-            this.pictureBox4.Location = new System.Drawing.Point(1319, 794);
+            this.pictureBox4.Location = new System.Drawing.Point(493, 684);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(191, 170);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -467,7 +468,9 @@
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.pictureBox6);
             this.panel1.Controls.Add(this.pictureBox2);
+            this.panel1.Controls.Add(this.pictureBox4);
             this.panel1.Controls.Add(this.pictureBox5);
+            this.panel1.Controls.Add(this.pictureBox3);
             this.panel1.Location = new System.Drawing.Point(401, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(681, 854);
@@ -499,9 +502,9 @@
             // 
             this.button2.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button2.ForeColor = System.Drawing.Color.IndianRed;
-            this.button2.Location = new System.Drawing.Point(1650, 814);
+            this.button2.Location = new System.Drawing.Point(1650, 869);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(207, 93);
+            this.button2.Size = new System.Drawing.Size(207, 38);
             this.button2.TabIndex = 10;
             this.button2.Text = "GENERATOR";
             this.button2.UseVisualStyleBackColor = true;
@@ -518,13 +521,22 @@
             // 
             this.button3.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button3.ForeColor = System.Drawing.Color.IndianRed;
-            this.button3.Location = new System.Drawing.Point(1528, 814);
+            this.button3.Location = new System.Drawing.Point(1650, 826);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(116, 93);
+            this.button3.Size = new System.Drawing.Size(207, 37);
             this.button3.TabIndex = 19;
             this.button3.Text = "LW 2";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Location = new System.Drawing.Point(1091, 733);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(386, 231);
+            this.richTextBox2.TabIndex = 20;
+            this.richTextBox2.Text = "";
+            this.richTextBox2.TextChanged += new System.EventHandler(this.richTextBox2_TextChanged);
             // 
             // Form1
             // 
@@ -532,13 +544,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Bisque;
             this.ClientSize = new System.Drawing.Size(1869, 976);
+            this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.progressBar2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.groupBox1);
@@ -613,5 +624,6 @@
         private Button button2;
         private ProgressBar progressBar2;
         private Button button3;
+        private RichTextBox richTextBox2;
     }
 }
