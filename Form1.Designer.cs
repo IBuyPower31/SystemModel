@@ -76,6 +76,7 @@
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.button3 = new System.Windows.Forms.Button();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -538,12 +539,25 @@
             this.richTextBox2.Text = "";
             this.richTextBox2.TextChanged += new System.EventHandler(this.richTextBox2_TextChanged);
             // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button4.ForeColor = System.Drawing.Color.IndianRed;
+            this.button4.Location = new System.Drawing.Point(1650, 783);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(207, 37);
+            this.button4.TabIndex = 21;
+            this.button4.Text = "LW 3";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Bisque;
             this.ClientSize = new System.Drawing.Size(1869, 976);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.progressBar2);
@@ -625,5 +639,6 @@
         private ProgressBar progressBar2;
         private Button button3;
         private RichTextBox richTextBox2;
+        private Button button4;
     }
 }

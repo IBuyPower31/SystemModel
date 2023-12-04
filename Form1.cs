@@ -219,6 +219,9 @@ namespace KPP
             int StepsCounter = 0; // Счетчик шагов моделирования
             // Средние параметры
             double AvgChecking = 0;
+            // LW № 3
+            double[] C = { 0.37, 0.92, 0.03, 0.14 };
+            StationaryGenerator stationaryGenerator = new StationaryGenerator(C, 2, 8);
 
             // Временные 
             double TempTime1 = 0;
@@ -286,9 +289,9 @@ namespace KPP
                 if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
                 {
                     //UPDATED после защиты: T для третьей лабораторной работы
-                    //T = generator.NormalFunction(0.75, 5);
+                    T = stationaryGenerator.GetNextValue();
                     AvgT += T;
-                    //textBox3.Text = Convert.ToString(Math.Round(T, 4));
+                    textBox3.Text = Convert.ToString(Math.Round(T, 4));
                     // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
                     if (QueueIn > QueueOut)
                     {
@@ -427,6 +430,41 @@ namespace KPP
             }
         }
 
+        // Третья ЛР будет выполняться в третьей ветке - LW_3
+        public class StationaryGenerator
+        {
+            private double M; // Математическое ожидание
+            private List<double> q; // Величины, распределенные нормально
+            private double[] C; // Найденные значения (из СЛАУ)
+            private Generator General = new Generator(); // Генератор из ЛР №2
+
+            public StationaryGenerator(double[] C, double min, double max)
+            {
+                this.C = C;
+                M = (max + min) / 2;
+                q = new List<double>();
+                for (int i = 0; i < C.Length; i++)
+                {
+                    q.Add(General.NormalFunction(1, 0));
+                }
+            }
+
+            public double GetStartValue()
+            {
+                var value = Enumerable.Range(0, C.Length).Select(i => C[i] * q[i]).Sum() + M;
+                return value;
+            }
+
+            public double GetNextValue()
+            {
+                q.Remove(q.FirstOrDefault());
+                q.Add(General.NormalFunction(1, 0));
+                var value = Enumerable.Range(0, C.Length).Select(i => C[i] * q[i]).Sum() + M;
+                return value;
+            }
+        }
+
+
         private void ExcelDumping()
         {
             Workbook workbook = new Workbook();
@@ -525,6 +563,33 @@ namespace KPP
         private void richTextBox2_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            double[] C = {0.37, 0.92, 0.03, 0.14 };
+            ArrayList FirstStationaryArray = new ArrayList(); // Нечетные значения (y')
+            ArrayList SecondStationaryArray = new ArrayList(); // Четные значения (y'')
+            StationaryGenerator stationaryGenerator = new StationaryGenerator(C, 2, 8);
+            for (int i = 0; i < 2000; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    SecondStationaryArray.Add(stationaryGenerator.GetNextValue());
+                }
+                else
+                {
+                    FirstStationaryArray.Add(stationaryGenerator.GetNextValue());
+                }
+            }
+            Workbook workbook = new Workbook();
+            Worksheet sheet = workbook.Worksheets.Add("StationaryProcess");
+            sheet.Cells.ImportArrayList(FirstStationaryArray, 1, 0, true);
+            sheet.Cells.ImportArrayList(SecondStationaryArray, 1, 1, true);
+            sheet.AutoFitColumns();
+            FirstStationaryArray.Clear();
+            SecondStationaryArray.Clear();
+            workbook.Save("StationaryProcess.xlsx");
         }
     }
 }
