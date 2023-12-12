@@ -286,10 +286,10 @@ namespace KPP
                 }
                 
 
+                T = stationaryGenerator.GetNextValue();
                 if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
                 {
                     //UPDATED после защиты: T для третьей лабораторной работы
-                    T = stationaryGenerator.GetNextValue();
                     AvgT += T;
                     textBox3.Text = Convert.ToString(Math.Round(T, 4));
                     // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
