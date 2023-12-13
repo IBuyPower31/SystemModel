@@ -78,6 +78,7 @@
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -504,7 +505,7 @@
             // 
             this.button2.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button2.ForeColor = System.Drawing.Color.IndianRed;
-            this.button2.Location = new System.Drawing.Point(1650, 869);
+            this.button2.Location = new System.Drawing.Point(1650, 884);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(207, 38);
             this.button2.TabIndex = 10;
@@ -523,9 +524,9 @@
             // 
             this.button3.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button3.ForeColor = System.Drawing.Color.IndianRed;
-            this.button3.Location = new System.Drawing.Point(1650, 826);
+            this.button3.Location = new System.Drawing.Point(1495, 927);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(207, 37);
+            this.button3.Size = new System.Drawing.Size(149, 37);
             this.button3.TabIndex = 19;
             this.button3.Text = "LW 2";
             this.button3.UseVisualStyleBackColor = true;
@@ -544,9 +545,9 @@
             // 
             this.button4.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button4.ForeColor = System.Drawing.Color.IndianRed;
-            this.button4.Location = new System.Drawing.Point(1650, 783);
+            this.button4.Location = new System.Drawing.Point(1495, 884);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(207, 37);
+            this.button4.Size = new System.Drawing.Size(149, 37);
             this.button4.TabIndex = 21;
             this.button4.Text = "LW 3";
             this.button4.UseVisualStyleBackColor = true;
@@ -556,7 +557,7 @@
             // 
             this.button5.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button5.ForeColor = System.Drawing.Color.IndianRed;
-            this.button5.Location = new System.Drawing.Point(1650, 740);
+            this.button5.Location = new System.Drawing.Point(1650, 841);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(207, 37);
             this.button5.TabIndex = 22;
@@ -564,12 +565,25 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
+            // button6
+            // 
+            this.button6.Font = new System.Drawing.Font("Showcard Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button6.ForeColor = System.Drawing.Color.IndianRed;
+            this.button6.Location = new System.Drawing.Point(1495, 841);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(149, 37);
+            this.button6.TabIndex = 23;
+            this.button6.Text = "LW 5";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Bisque;
             this.ClientSize = new System.Drawing.Size(1869, 976);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.richTextBox2);
@@ -655,5 +669,6 @@
         private RichTextBox richTextBox2;
         private Button button4;
         private Button button5;
+        private Button button6;
     }
 }

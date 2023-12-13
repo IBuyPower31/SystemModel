@@ -651,7 +651,7 @@ namespace KPP
             }
             FacesCount += 1;
         }
-        async private void button5_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
             #region stohasparams
             Generator generator = new Generator();
@@ -836,5 +836,263 @@ namespace KPP
         }
 
 
+        // Дальнейший код будет исполняться в ветке LW_5. Это пятая лабораторная работа
+
+        public class OptimizationModel
+        {
+            public double dt { get; set; }
+            public int N { get; set; }
+            public int AvgIN { get; set; }
+
+            public int AvgOut { get; set; }
+            public int NoCheckingFaces { get; set; }
+
+
+            public OptimizationModel(string[] buffer)
+            {
+                dt = Convert.ToDouble(buffer[0]);
+                N = Convert.ToInt32(buffer[1]);
+                AvgIN = Convert.ToInt32(buffer[2]);
+                AvgOut = Convert.ToInt32(buffer[3]);
+                NoCheckingFaces = Convert.ToInt32(buffer[4]);
+            }
+        }
+
+        public List<OptimizationModel> OptimizationModels = new List<OptimizationModel>();
+
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            #region stohasparams
+            Generator generator = new Generator();
+            // Исходные данные стохастической модели
+            t1 = Convert.ToDouble(textBox1.Text); // Новый гость
+            t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
+            T = Convert.ToDouble(textBox3.Text); // Проверка человека
+            Delta1 = Convert.ToDouble(textBox4.Text); // Человек без документов
+            Delta2 = Convert.ToDouble(textBox5.Text); // Что-то принес или ворует
+            dt = Convert.ToDouble(textBox6.Text); // Наказание человека по времени
+            N = Convert.ToInt32(textBox7.Text); // Размер стека охранника 
+            Days = Convert.ToInt32(textBox8.Text);
+            deltaT = Convert.ToDouble(textBox9.Text);
+            #endregion
+            // Инициализация и обнуление нужных переменных
+            double localTime1 = t1; // Локальное время прихода = Время прихода человека
+            double localTime2 = t2; // Локальное время выхода = Время выхода человека
+            ResetParams();
+            // 
+            TimeSpeed = Convert.ToInt32(trackBar1.Value); // Скорость моделирования
+            MinutesInDay = Days * 24 * 60; // Количество минут в днях
+            progressBar1.Maximum = MinutesInDay + 2; // Максимальное значение прогрессбара
+            int StepsCounter = 0; // Счетчик шагов моделирования
+            // Средние параметры
+            double AvgChecking = 0;
+            // LW № 3
+            double[] C = { 0.37, 0.92, 0.03, 0.14 };
+            StationaryGenerator stationaryGenerator = new StationaryGenerator(C, 2, 8);
+
+            // Временные 
+            double TempTime1 = 0;
+            double TempTime2 = 0;
+
+            // Обнуление переменных
+            dt = 4;
+            N = 350;
+            IsRunning = true;
+            // Новые флаги
+            for (int j = 0; j <= 20; j++)
+            {
+                dt += 1;
+
+                for (int i = 0; i <= 20; i++)
+                {
+
+                    t1 = Convert.ToDouble(textBox1.Text); // Новый гость
+                    t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
+                    T = Convert.ToDouble(textBox3.Text); // Проверка человека
+                    Days = Convert.ToInt32(textBox8.Text);
+                    deltaT = Convert.ToDouble(textBox9.Text);
+
+                    progressBar1.Value = progressBar1.Minimum;
+
+                    // Изменение параметров
+                    N += 10;
+                   
+
+
+                    Protocol = new string[5] { "", "", "", "", "" };
+
+                    localTime1 = t1;
+                    localTime2 = t2;
+                    AvgIn = 0;
+                    AvgOut = 0;
+                    NoCheckingPeoples = 0;
+                    for (Time = 0; Time <= MinutesInDay && IsRunning; Time += deltaT) // Общее модельное время
+                    {
+
+                        StepsCounter += 1; // Количество шагов цикла
+                        if (Time - localTime1 >= 0)
+                        {
+                            // Значит человек пришел на КПП, запуск активности 1
+                            QueueIn += 1;
+                            AvgIn += 1;
+                            TempTime1 = generator.NormalFunction(0.5, 2);
+                            localTime1 = Time + TempTime1;
+                        }
+
+                        if (Time - localTime2 >= 0)
+                        {
+                            // Значит человек уходит с КПП, запуск активности 2
+                            QueueOut += 1;
+                            AvgOut += 1;
+                            TempTime2 = generator.NormalFunction(0.5, 3);
+                            localTime2 = Time + TempTime2;
+                        }
+
+                        AvgIn += QueueIn;
+                        AvgOut += QueueOut;
+
+                        if (!IsChecking && !IsPunishing)
+                        {
+                            WhatIsDoingSecurity = "Бездельничает";
+                        }
+                        if (IsChecking)
+                        {
+                            IsCheckingTime -= deltaT; // Отнимается время одной итерации цикла
+                            WhatIsDoingSecurity = "Проверяет";
+
+                            IsCheckingFunction();
+                        }
+                        if (IsPunishing && !IsChecking)
+                        {
+                            IsPunishingTime -= deltaT;
+                            WhatIsDoingSecurity = "Наказывает";
+
+                            IsPunishingFunction();
+                        }
+
+
+                        T = stationaryGenerator.GetNextValue();
+                        if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
+                        {
+                            //UPDATED после защиты: T для третьей лабораторной работы
+                            AvgT += T;
+                            // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
+                            if (QueueIn > QueueOut)
+                            {
+                                QueueIn -= 1; // Человек заходит в рубку охранника
+                                SecurityWorking();
+                            }
+                            else if (QueueOut > QueueIn)
+                            {
+                                QueueOut -= 1;
+                                SecurityWorking();
+                            }
+                        }
+
+
+                        // Если человек много
+                        if (QueueIn + QueueOut >= N)
+                        {
+                            // То всех на выход выпускаем без проблем
+                            NoCheckingPeoples += QueueOut;
+                            QueueOut = 0;
+
+                        }
+                        
+                    }
+                    Protocol[0] = dt.ToString(); // DT
+                    Protocol[1] = N.ToString(); // N
+                    Protocol[2] = Convert.ToString(Math.Round(AvgIn / MinutesInDay, 0));
+                    Protocol[3] = Convert.ToString(Math.Round(AvgOut / MinutesInDay, 0));
+                    Protocol[4] = Convert.ToString(NoCheckingPeoples);
+                    ResetParams();
+                    OptimizationModel optimization = new OptimizationModel(Protocol);
+                    OptimizationModels.Add(optimization);
+                    if (i == 20)
+                    {
+                        N = 350;
+                    }
+                    
+                }
+
+            }
+            
+            LW5Dumping();
+
+        }
+
+
+        bool CheckAvgIN(int j, int k)
+        {
+            return (OptimizationModels[j].AvgIN <= OptimizationModels[k].AvgIN);
+        }
+
+        bool CheckAvgOUT(int j, int k)
+        {
+            return (OptimizationModels[j].AvgOut <= OptimizationModels[k].AvgOut);
+        }
+
+        bool CheckNoChecking(int j, int k)
+        {
+            return (OptimizationModels[j].NoCheckingFaces <= OptimizationModels[k].NoCheckingFaces);
+        }
+
+        bool checkToDelete(int j, int k)
+        {
+            return (j != k && CheckAvgIN(j, k) && CheckAvgOUT(j, k) && CheckNoChecking(j, k));
+        }
+        private void ParetoOptimisation()
+        {
+            int k = 0;
+            while (k < OptimizationModels.Count)
+            {
+                int j = 0;
+                while (j < OptimizationModels.Count && !checkToDelete(j, k))
+                {
+                    j++;
+                }
+                if (j < OptimizationModels.Count)
+                {
+                    OptimizationModels.RemoveAt(k);
+                }
+                else
+                {
+                    k++;
+                }
+            }
+
+        }
+
+        private void LW5Dumping()
+        {
+            Workbook workbook = new Workbook();
+            Worksheet sheet = workbook.Worksheets.Add("OptimizationModel");
+            sheet.Cells.ImportCustomObjects((ICollection)OptimizationModels,
+                new string[] { "dt", "N", "AvgIN", "AvgOut", "NoCheckingFaces" },
+                true,
+                0,
+                0,
+                OptimizationModels.Count,
+                true,
+                null,
+                false
+                );
+            sheet.AutoFitColumns();
+            ParetoOptimisation();
+            Worksheet sheet1 = workbook.Worksheets.Add("ParetoFunction");
+            sheet1.Cells.ImportCustomObjects((ICollection)OptimizationModels,
+                new string[] { "dt", "N", "AvgIN", "AvgOut", "NoCheckingFaces" },
+                true,
+                0,
+                0,
+                OptimizationModels.Count,
+                true,
+                null,
+                false
+                );
+            sheet1.AutoFitColumns();
+            workbook.Save("Optimization.xlsx");
+        }
     }
 }
