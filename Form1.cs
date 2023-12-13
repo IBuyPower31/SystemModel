@@ -591,5 +591,250 @@ namespace KPP
             SecondStationaryArray.Clear();
             workbook.Save("StationaryProcess.xlsx");
         }
+
+        // Дальнейший код необходим для ЛР №4
+        private static double Lambda1 = 0.54;
+        
+        private static double Lambda2 = 0.74;
+        public class RegressionModel
+        {
+            public double lambda1 { get; set; }
+            public double lambda2 { get; set; }
+            public double DT { get; set; }
+            
+            public int Punished { get; set; }
+
+
+            public RegressionModel(string[] buffer)
+            {
+                lambda1 = Convert.ToDouble(buffer[0]);
+                lambda2 = Convert.ToDouble(buffer[1]);
+                DT = Convert.ToDouble(buffer[2]);
+                Punished = Convert.ToInt32(buffer[3]);
+            }
+        }
+
+        public List<RegressionModel> RegressionModels = new List<RegressionModel>();
+
+        private void SecurityWorkingLW4()
+        {
+            WhatIsDoingSecurity = "Проверяет";
+            IsCheckingTime += T; // Охранник приступает к проверке  очередного человека
+            IsChecking = true;
+            Random random = new Random();
+            int rnd = random.Next(0, 100);
+            // Новый генератор
+            Generator generator = new Generator();
+            Delta1 = generator.ExponentialFunction(Lambda1);
+            Delta2 = generator.ExponentialFunction(Lambda2);
+            if (rnd < Delta1 && rnd < Delta2) // Двойной нарушитель
+            {
+                NoDocs += 1;
+                WithDrugs += 1;
+                IsPunishingTime += dt;
+                PunishedPeoples += 1;
+                IsPunishing = true;
+            }
+            else if (rnd < Delta1) // Значит человек без документов
+            {
+                NoDocs += 1; // Добавляем к счетчику человек без документов
+                IsPunishingTime += dt; // Увеличиваем время охранника
+                PunishedPeoples += 1;
+                IsPunishing = true;
+            }
+            else if (rnd < Delta2) // Значит человек принес/вынес что-либо
+            {
+                WithDrugs += 1;
+                IsPunishingTime += dt;
+                PunishedPeoples += 1;
+                IsPunishing = true;
+            }
+            FacesCount += 1;
+        }
+        async private void button5_Click(object sender, EventArgs e)
+        {
+            #region stohasparams
+            Generator generator = new Generator();
+            // Исходные данные стохастической модели
+            t1 = Convert.ToDouble(textBox1.Text); // Новый гость
+            t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
+            T = Convert.ToDouble(textBox3.Text); // Проверка человека
+            Delta1 = Convert.ToDouble(textBox4.Text); // Человек без документов
+            Delta2 = Convert.ToDouble(textBox5.Text); // Что-то принес или ворует
+            dt = Convert.ToDouble(textBox6.Text); // Наказание человека по времени
+            N = Convert.ToInt32(textBox7.Text); // Размер стека охранника 
+            Days = Convert.ToInt32(textBox8.Text);
+            deltaT = Convert.ToDouble(textBox9.Text);
+            #endregion
+            // Инициализация и обнуление нужных переменных
+            double localTime1 = t1; // Локальное время прихода = Время прихода человека
+            double localTime2 = t2; // Локальное время выхода = Время выхода человека
+            ResetParams();
+            // 
+            TimeSpeed = Convert.ToInt32(trackBar1.Value); // Скорость моделирования
+            MinutesInDay = Days * 24 * 60; // Количество минут в днях
+            progressBar1.Maximum = MinutesInDay + 2; // Максимальное значение прогрессбара
+            int StepsCounter = 0; // Счетчик шагов моделирования
+            // Средние параметры
+            double AvgChecking = 0;
+            // LW № 3
+            double[] C = { 0.37, 0.92, 0.03, 0.14 };
+            StationaryGenerator stationaryGenerator = new StationaryGenerator(C, 2, 8);
+
+            // Временные 
+            double TempTime1 = 0;
+            double TempTime2 = 0;
+
+            // Обнуление переменных
+            dt = 9;
+            IsRunning = true;
+            // Новые флаги
+            for (int k = 0; k <= 10; k++) {
+                dt += 1;
+                for (int j = 0; j <= 10; j++) {
+                    Lambda2 += 0.01;
+                    
+                    for (int i = 0; i <= 10; i++) {
+                
+                        t1 = Convert.ToDouble(textBox1.Text); // Новый гость
+                        t2 = Convert.ToDouble(textBox2.Text); // Кто-то уходит
+                        T = Convert.ToDouble(textBox3.Text); // Проверка человека
+                        N = Convert.ToInt32(textBox7.Text); // Размер стека охранника 
+                        Days = Convert.ToInt32(textBox8.Text);
+                        deltaT = Convert.ToDouble(textBox9.Text);
+                
+                        progressBar1.Value = progressBar1.Minimum;
+                        // Изменение параметров
+                        
+                        
+                        Lambda1 += 0.01;
+                        
+                                
+                        Protocol = new string[4] { "", "", "", "" };
+
+                        localTime1 = t1;
+                        localTime2 = t2;
+                        for (Time = 0; Time <= MinutesInDay && IsRunning; Time += deltaT) // Общее модельное время
+                        {
+                    
+                            StepsCounter += 1; // Количество шагов цикла
+                            if (Time - localTime1 >= 0)
+                            {
+                                // Значит человек пришел на КПП, запуск активности 1
+                                QueueIn += 1;
+                                AvgIn += 1;
+                                TempTime1 = generator.NormalFunction(0.5, 2);
+                                localTime1 = Time + TempTime1;
+                            }
+
+                            if (Time - localTime2 >= 0)
+                            {
+                                // Значит человек уходит с КПП, запуск активности 2
+                                QueueOut += 1;
+                                AvgOut += 1;
+                                TempTime2 = generator.NormalFunction(0.5, 3);
+                                localTime2 = Time + TempTime2;
+                            }
+
+                            AvgIn += QueueIn;
+                            AvgOut += QueueOut;
+
+                            if (!IsChecking && !IsPunishing)
+                            {
+                                WhatIsDoingSecurity = "Бездельничает";
+                            }
+                            if (IsChecking)
+                            {
+                                IsCheckingTime -= deltaT; // Отнимается время одной итерации цикла
+                                WhatIsDoingSecurity = "Проверяет";
+
+                                IsCheckingFunction();
+                            }
+                            if (IsPunishing && !IsChecking)
+                            {
+                                IsPunishingTime -= deltaT;
+                                WhatIsDoingSecurity = "Наказывает";
+
+                                IsPunishingFunction();
+                            }
+
+
+                            T = stationaryGenerator.GetNextValue();
+                            if ((QueueIn > 0 || QueueOut > 0) && IsChecking == false && IsPunishing == false) // В какой-то из очередей есть люди и охранник готов их проверять
+                            {
+                                //UPDATED после защиты: T для третьей лабораторной работы
+                                AvgT += T;
+                                // Значит охранник начинает проверку очереди, в которой больше человек, активность 3
+                                if (QueueIn > QueueOut)
+                                {
+                                    QueueIn -= 1; // Человек заходит в рубку охранника
+                                    SecurityWorkingLW4();
+                                }
+                                else if (QueueOut > QueueIn)
+                                {
+                                    QueueOut -= 1;
+                                    SecurityWorkingLW4();
+                                }
+                            }
+
+
+                            // Если человек много
+                            if (QueueIn + QueueOut >= N)
+                            {
+                                // То всех на выход выпускаем без проблем
+                                NoCheckingPeoples += QueueOut;
+                                QueueOut = 0;
+
+                            }
+                            //await Task.Delay((1000 * Convert.ToInt32(deltaT) / 25) * Convert.ToInt32(TimeSpeed)); // Программная задержка
+                            //MessageBox.Show(PunishedPeoples.ToString());
+                            //MegaPunishedPeoples = PunishedPeoples;
+                        }
+                        Protocol[0] = Lambda1.ToString(); // lambda1
+                        Protocol[1] = Lambda2.ToString(); // lambda1
+                        Protocol[2] = Convert.ToString(dt);    // dt
+                        Protocol[3] = Convert.ToString(PunishedPeoples);
+                        ResetParams();
+                        RegressionModel regression = new RegressionModel(Protocol);
+                        RegressionModels.Add(regression);
+                        if (i == 10)
+                        {
+                            Lambda1 = 0.54;
+                        }
+                    }
+                    if (j == 10)
+                    {
+                        Lambda2 = 0.74;
+                    }
+                    LW4Dumping();
+                }
+                /*if (k == 9)
+                {
+                    dt = 10;
+                }*/
+            }
+
+
+        }
+
+        private void LW4Dumping()
+        {
+            Workbook workbook = new Workbook();
+            Worksheet sheet = workbook.Worksheets.Add("RegressionModel");
+            sheet.Cells.ImportCustomObjects((ICollection)RegressionModels,
+                new string[] { "lambda1", "lambda2", "DT", "Punished" },
+                true,
+                0,
+                0,
+                RegressionModels.Count,
+                true,
+                null,
+                false
+                );
+            sheet.AutoFitColumns();
+            workbook.Save("Regression.xlsx");
+        }
+
+
     }
 }
